@@ -5,11 +5,12 @@ class Enigma
   def initialize
   end
 
-  def encrypt(text, date=today_date, keys=rand_keys)
+  def encrypt(text, keys=rand_keys, date=today_date)
     @original_text = text
     @date = date.to_s
     @keys = keys.to_s
     @encoded_text = encode(text)
+    {encryption: encoded_text, key: keys, date: date}
   end
 
   def encode(text)
@@ -18,6 +19,26 @@ class Enigma
     rotate_offset = offset
     new_index_values = array.reduce([]) do |acc, letter_index|
       acc << (letter_index[1] + rotate_offset[0] > 27 ? ((letter_index[1] + rotate_offset[0]) - 27) : (letter_index[1] + rotate_offset[0]))
+      rotate_offset = rotate_offset.rotate
+      acc
+    end
+    index_to_character(new_index_values).join
+  end
+
+  def decrypt(encrypted_text, keys=rand_keys, date=today_date)
+    @date = date.to_s
+    @keys = keys.to_s
+    @encoded_text = encrypted_text
+    @original_text = decode(encrypted_text)
+    {decryption: original_text, key: keys, date: date}
+  end
+
+  def decode(encrypted_text)
+    array = index_text(encrypted_text)
+    offset = generate_offsets.values
+    rotate_offset = offset
+    new_index_values = array.reduce([]) do |acc, letter_index|
+      acc << (letter_index[1] - rotate_offset[0] < 1 ? ((letter_index[1] - rotate_offset[0]) + 27) : (letter_index[1] - rotate_offset[0]))
       rotate_offset = rotate_offset.rotate
       acc
     end
@@ -35,7 +56,7 @@ class Enigma
   def index_text(text)
     alphabet = ('a'..'z').to_a << " "
     alphabet_hash = alphabet.map.with_index(1) { |x, y| [x, y] }.to_h
-    original_text = @original_text.downcase.chars
+    original_text = text.downcase.chars
     original_text.collect do |char|
       alphabet_hash.assoc(char)
     end
@@ -56,7 +77,7 @@ class Enigma
   end
 
   def rand_keys
-    rand 10000..99999
+    (rand 00000..99999).to_s.rjust(5,'0')
   end
 
   def today_date
