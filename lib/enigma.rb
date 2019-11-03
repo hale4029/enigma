@@ -21,9 +21,7 @@ class Enigma
       rotate_offset = rotate_offset.rotate
       acc
     end
-    index_to_character(new_index_values)
-    require "pry"; binding.pry
-
+    index_to_character(new_index_values).join
   end
 
   def index_to_character(index_values)
@@ -50,10 +48,10 @@ class Enigma
   def generate_offsets
     offset_digits = create_offset_digits
     offset = {}
-    offset[:a] = ((@keys.chars[0] + @keys.chars[1]).to_i + offset_digits.pop.to_i) % 27
-    offset[:b] = ((@keys.chars[1] + @keys.chars[2]).to_i + offset_digits.pop.to_i) % 27
-    offset[:c] = ((@keys.chars[2] + @keys.chars[3]).to_i + offset_digits.pop.to_i) % 27
-    offset[:d] = ((@keys.chars[3] + @keys.chars[4]).to_i + offset_digits.pop.to_i) % 27
+    offset[:a] = ((@keys.chars[0] + @keys.chars[1]).to_i + offset_digits.shift.to_i) % 27
+    offset[:b] = ((@keys.chars[1] + @keys.chars[2]).to_i + offset_digits.shift.to_i) % 27
+    offset[:c] = ((@keys.chars[2] + @keys.chars[3]).to_i + offset_digits.shift.to_i) % 27
+    offset[:d] = ((@keys.chars[3] + @keys.chars[4]).to_i + offset_digits.shift.to_i) % 27
     offset
   end
 
@@ -62,7 +60,7 @@ class Enigma
   end
 
   def today_date
-    Time.now.strftime("%d/%m/%Y")
+    Time.now.strftime("%d/%m/%y")
   end
 
 end
