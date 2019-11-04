@@ -3,18 +3,18 @@ require './lib/helper_module'
 class Enigma
   include HelperMethods
 
-  attr_reader :keys, :date, :original_text
-  attr_accessor :encoded_text
+  attr_reader :keys, :date, :message
+  attr_accessor :encrypted_text
 
   def initialize
   end
 
   def encrypt(text, keys=rand_keys, date=today_date)
-    @original_text = text
+    @message = text
     @date = date.to_s
     @keys = keys.to_s
-    @encoded_text = encode(text)
-    {encryption: encoded_text, key: keys, date: date}
+    @encrypted_text = encode(text)
+    {encryption: encrypted_text, key: keys, date: date}
   end
 
   def encode(text)
@@ -31,9 +31,9 @@ class Enigma
   def decrypt(encrypted_text, keys=rand_keys, date=today_date)
     @date = date.to_s
     @keys = keys.to_s
-    @encoded_text = encrypted_text
-    @original_text = decode(encrypted_text)
-    {decryption: original_text, key: keys, date: date}
+    @encrypted_text = encrypted_text
+    @message = decode(encrypted_text)
+    {decryption: message, key: keys, date: date}
   end
 
   def decode(encrypted_text)
