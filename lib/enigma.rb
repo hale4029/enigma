@@ -47,5 +47,8 @@ class Enigma
     index_to_character(new_index_values).join
   end
 
+  def crack
+
+  end
 
 end

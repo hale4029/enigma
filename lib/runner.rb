@@ -1,5 +1,5 @@
 require_relative 'enigma'
 
 enigma = Enigma.new
-enigma.encrypt('hello world', "02715", "040895")
+p enigma.encrypt("hello world end", "08304", "291018")
 require "pry"; binding.pry
