@@ -1,7 +1,9 @@
 require './lib/helper_module'
-
+require './lib/crack_module'
+  
 class Enigma
   include HelperMethods
+  include CrackMethods
 
   attr_reader :keys, :date, :message
   attr_accessor :encrypted_text
@@ -63,12 +65,13 @@ class Enigma
       last_four_index.rotate!
       acc.rotate(2)
     end
-    offset_digits = create_offset_digits
-    number_set = (00..99).to_a
+
     a = []
     b = []
     c = []
     d = []
+    offset_digits = create_offset_digits
+    number_set = (00..99).to_a
     number_set.map do |num|
       a << num.to_s.rjust(2,'0') if (((num + offset_digits[0].to_i) % 27) == total_offset[0])
       b << num.to_s.rjust(2,'0') if (((num + offset_digits[1].to_i) % 27) == total_offset[1])
@@ -103,7 +106,7 @@ class Enigma
 
     @keys = hash_output.first
 
-    @message = decode(encrypted_text)
+    decode(encrypted_text)
   end
 
 end
