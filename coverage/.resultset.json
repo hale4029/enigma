@@ -3,6 +3,10 @@
     "coverage": {
       "/Users/hlevin/turing/mod_1/enigma/lib/enigma.rb": [
         1,
+        null,
+        1,
+        1,
+        null,
         1,
         1,
         null,
@@ -17,7 +21,6 @@
         1,
         null,
         null,
-        1,
         1,
         1,
         1,
@@ -41,13 +44,18 @@
         1,
         1,
         1,
-        1,
         11,
         11,
         11,
         null,
         1,
         null,
+        null,
+        null,
+        null
+      ],
+      "/Users/hlevin/turing/mod_1/enigma/lib/helper_module.rb": [
+        1,
         null,
         1,
         2,
@@ -91,6 +99,6 @@
         null
       ]
     },
-    "timestamp": 1572824593
+    "timestamp": 1572832234
   }
 }
