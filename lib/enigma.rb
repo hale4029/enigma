@@ -1,4 +1,4 @@
-require './lib/helper_module'
+require_relative './lib/helper_module'
 
 class Enigma
   include HelperMethods
