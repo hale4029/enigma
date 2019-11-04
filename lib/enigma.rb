@@ -65,37 +65,41 @@ class Enigma
       acc.rotate(2)
     end
     offset_digits = create_offset_digits
-    numbers = (00..99).to_a
+    number_set = (00..99).to_a
     a = []
     b = []
     c = []
     d = []
-    numbers.map do |num|
+    number_set.map do |num|
       a << num if (((num + offset_digits[0].to_i) % 27) == total_offset[0])
       b << num if (((num + offset_digits[1].to_i) % 27) == total_offset[1])
       c << num if (((num + offset_digits[2].to_i) % 27) == total_offset[2])
       d << num if (((num + offset_digits[3].to_i) % 27) == total_offset[3])
     end
-
-
-    possible_outcomes = []
+    possible_combinations = []
       a.each do |n1|
         b.each do |n2|
           c.each do |n3|
             d.each do |n4|
-              possible_outcomes.push([n1, n2, n3, n4])
+              possible_combinations.push([n1, n2, n3, n4])
             end
           end
         end
       end
-    # first_fig = a.select do |first|
-    #   first if b.select do |second|
-    #     second.to_s.chars.first.to_i == first.to_s.chars.first.to_i
-    #     end
-    # end
-    require "pry"; binding.pry
+    key_possibilities = possible_combinations.reduce([]) do |acc,key_iteration|
+      acc << [key_iteration.join.rjust(8,"0").chars[0],
+      key_iteration.join.rjust(8,"0").chars[1],
+      key_iteration.join.rjust(8,"0").chars[3],
+      key_iteration.join.rjust(8,"0").chars[5],
+      key_iteration.join.rjust(8,"0").chars[7]].join
+      acc
+    end
 
-    #decrypt(encrypted_text, keys, date)
+    key_possibilities.find_all do |key_poss|
+      decrypt(encrypted_text.chars.last(4).join, key_poss, date)
+      " end" == @message
+    end
+      
   end
 
 end
