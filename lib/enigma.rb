@@ -1,7 +1,9 @@
 require './lib/helper_module'
+require './lib/crack_module'
 
 class Enigma
   include HelperMethods
+  include CrackMethods
 
   attr_reader :keys, :date, :message
   attr_accessor :encrypted_text
@@ -28,16 +30,16 @@ class Enigma
     index_to_character(new_index_values).join
   end
 
-  def decrypt(encrypted_text, keys=rand_keys, date=today_date)
+  def decrypt(encrypted_message, keys=rand_keys, date=today_date)
     @date = date.to_s
     @keys = keys.to_s
-    @encrypted_text = encrypted_text
-    @message = decode(encrypted_text)
+    @encrypted_text = encrypted_message
+    @message = decode(encrypted_message)
     {decryption: message, key: keys, date: date}
   end
 
-  def decode(encrypted_text)
-    indexed_chars = index_text(encrypted_text)
+  def decode(encrypted_message)
+    indexed_chars = index_text(encrypted_message)
     rotate_offset = generate_offsets.values
     new_index_values = indexed_chars.reduce([]) do |acc, letter_index|
       acc << (letter_index[1] - rotate_offset[0] < 1 ? ((letter_index[1] - rotate_offset[0]) + 27) : (letter_index[1] - rotate_offset[0]))
@@ -47,63 +49,41 @@ class Enigma
     index_to_character(new_index_values).join
   end
 
-  def crack(encrypted_text, date=today_date)
+  def crack(encrypted_message, date=today_date)
     @date = date.to_s
-    @encrypted_text = encrypted_text
-    @message = cracker(encrypted_text)
+    @encrypted_text = encrypted_message
+    @message = cracker(encrypted_message)
     {decryption: @message, key: @keys, date: @date}
   end
 
-  def cracker(encrypted_text)
-    indexed_chars = index_text(encrypted_text)
+  def cracker(encrypted_message)
+    indexed_chars = index_text(encrypted_message)
+    # if indexed_chars.length % 4 == 3
+    #   move = 1
+    # elsif indexed_chars.length % 4 == 0
+    #   move = 0
+    # elsif indexed_chars.length % 4 == 1
+    #   move = 3
+    # else
+    #   move = 2
+    # end
     last_four_index = index_text(" end")
     last_four_chars = indexed_chars.last(4)
-    total_offset = last_four_chars.reduce([]) do |acc, letter_index|
+    @total_offset = last_four_chars.reduce([]) do |acc, letter_index|
       acc << ((letter_index[1] - last_four_index[0][1]) < 1 ? ((letter_index[1] + 27) - last_four_index[0][1] ) : (letter_index[1] - last_four_index[0][1]))
       last_four_index.rotate!
       acc.rotate(2)
     end
-    offset_digits = create_offset_digits
-    number_set = (00..99).to_a
-    a = []
-    b = []
-    c = []
-    d = []
-    number_set.map do |num|
-      a << num.to_s.rjust(2,'0') if (((num + offset_digits[0].to_i) % 27) == total_offset[0])
-      b << num.to_s.rjust(2,'0') if (((num + offset_digits[1].to_i) % 27) == total_offset[1])
-      c << num.to_s.rjust(2,'0') if (((num + offset_digits[2].to_i) % 27) == total_offset[2])
-      d << num.to_s.rjust(2,'0') if (((num + offset_digits[3].to_i) % 27) == total_offset[3])
-    end
 
-    possible_combinations = []
-      a.each do |n1|
-        b.each do |n2|
-          c.each do |n3|
-            d.each do |n4|
-              possible_combinations.push([n1, n2, n3, n4])
-            end
-          end
-        end
-      end
+    @a = []; @b = [], @c = [], @d = []
+    solve_for_key_offset
+    possible_combinations
+    key_iterations
 
-    key_possibilities = possible_combinations.reduce([]) do |acc, key_iteration|
-      acc << [key_iteration.join.rjust(8,"0").chars[0],
-      key_iteration.join.rjust(8,"0").chars[1],
-      key_iteration.join.rjust(8,"0").chars[3],
-      key_iteration.join.rjust(8,"0").chars[5],
-      key_iteration.join.rjust(8,"0").chars[7]].join
-      acc
-    end
+    # @ending_cheat = last_four_chars.rotate(move).map { |x| x[0]}.join
 
-    hash_output = key_possibilities.map do |key_poss|
-      @keys = key_poss
-      key_poss if decode("ssih") == "end "
-    end.compact
-
-    @keys = hash_output.first
-
-    @message = decode(encrypted_text)
+    find_key
+    decode(encrypted_message)
   end
 
 end
