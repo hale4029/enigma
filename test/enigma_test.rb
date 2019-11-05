@@ -26,12 +26,6 @@ class TestEnigma < Minitest::Test
   end
 
   def test_crack
-    # assert_equal ({:encryption=>"vjqtbeaweqihssi",
-    #    :key=>"08304",
-    #    :date=>"291018"}), @enigma.encrypt("hello world end", "08304", "291018")
-    # assert_equal 'hello world end', @enigma.message
-    # assert_equal "vjqtbeaweqihssi", @enigma.encrypted_text
-    #assert_equal 'hello world end', @enigma.message
     assert_equal ({:decryption=>"hello world end",
        :key=>"08304",
        :date=>"291018"}), @enigma.crack("vjqtbeaweqihssi", "291018")
