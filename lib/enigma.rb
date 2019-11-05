@@ -4,7 +4,6 @@ require './lib/crack_module'
 class Enigma
   include HelperMethods
   include CrackMethods
-
   attr_reader :keys, :date, :message
   attr_accessor :encrypted_text
 
@@ -58,15 +57,6 @@ class Enigma
 
   def cracker(encrypted_message)
     indexed_chars = index_text(encrypted_message)
-    # if indexed_chars.length % 4 == 3
-    #   move = 1
-    # elsif indexed_chars.length % 4 == 0
-    #   move = 0
-    # elsif indexed_chars.length % 4 == 1
-    #   move = 3
-    # else
-    #   move = 2
-    # end
     last_four_index = index_text(" end")
     last_four_chars = indexed_chars.last(4)
     @total_offset = last_four_chars.reduce([]) do |acc, letter_index|
@@ -74,14 +64,8 @@ class Enigma
       last_four_index.rotate!
       acc.rotate(2)
     end
-
     @a = []; @b = [], @c = [], @d = []
     solve_for_key_offset
-    #possible_combinations
-    #key_iterations
-
-    # @ending_cheat = last_four_chars.rotate(move).map { |x| x[0]}.join
-
     find_key
     decode(encrypted_message)
   end
