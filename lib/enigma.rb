@@ -77,8 +77,8 @@ class Enigma
 
     @a = []; @b = [], @c = [], @d = []
     solve_for_key_offset
-    possible_combinations
-    key_iterations
+    #possible_combinations
+    #key_iterations
 
     # @ending_cheat = last_four_chars.rotate(move).map { |x| x[0]}.join
 
