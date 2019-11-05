@@ -12,7 +12,6 @@ module CrackMethods
     end
   end
 
-
   def possible_combinations
     combinations = []
       @a.each do |n1|
